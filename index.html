@@ -400,6 +400,25 @@ document.getElementById('changeUsernameButton').addEventListener('click', () => 
     }
 });
 
+
+document.addEventListener('keydown', (event) => {
+    // Focus on the message input if it's not already focused
+    messageInput.focus();
+
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Prevent default enter action
+        sendButton.click(); // Simulate clicking send button
+    } 
+});
+
+// Handle keyboard input directly into message input
+// To append the key only when it's not repeated
+document.addEventListener('keypress', (event) => {
+    // Check if the key is a single character
+    if (event.key.length === 0) {
+        messageInput.value += event.key; // Append the key to the input
+    }
+});
     </script>
 </body>
 </html>
