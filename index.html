@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Dots:wght@400..700&family=Lilita+One&family=Silkscreen:wght@400;700&family=Sofadi+One&display=swap" rel="stylesheet">
-
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <style>
         body {
             font-family: "Sofadi One", system-ui;
@@ -64,7 +64,7 @@
             font-size: 16px;
         }
 
-        #sendButton, #clearButton , .btn{
+        #sendButton, #clearButton , #changeUsernameButton{
             padding: 15px 10px;
             border: none;
             border-radius: 50px;
@@ -79,14 +79,14 @@
     
         }
 
-        .btn {
+        #changeUsernameButton {
             background-color: #00ff84;
             color: white;
     margin-left: 10px;
     align-items: center;
         }
 
-        .btn:hover {
+        #changeUsernameButton:hover {
             background-color: #9face6;
             transform: translateY(-2px);
         }
@@ -255,9 +255,11 @@
                 <button id="clearButton"><span class="material-symbols-outlined">
                     delete
                     </span></button>
-                    <a href="private.html" class="btn"><span class="material-symbols-outlined" >
-                        private_connectivity
-                        </span></a>
+                    
+                        <button id="changeUsernameButton"><span class="material-symbols-outlined">
+                            change_circle
+                            </span></button>
+
             </div>
     <!-- PIN Modal -->
     <div class="pin-modal" id="pinModal">
@@ -380,6 +382,24 @@
                 alert('Please enter a name!');
             }
         });
+
+        // Function to change username
+function changeUsername(newUsername) {
+    // Update the username in local storage
+    localStorage.setItem('username', newUsername);
+    
+    // Optionally, you can inform the user that the username has been updated
+    alert('Username changed successfully to: ' + newUsername);
+}
+
+
+document.getElementById('changeUsernameButton').addEventListener('click', () => {
+    const newUsername = prompt("Enter your new username:");
+    if (newUsername) {
+        changeUsername(newUsername);
+    }
+});
+
     </script>
 </body>
 </html>
