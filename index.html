@@ -38,7 +38,7 @@
             border-radius: 5px;
         }
 
-        #sendButton {
+        #sendButton, #clearButton {
             padding: 10px;
             background-color: lightblue;
             border: none;
@@ -68,6 +68,7 @@
         <div id="messages"></div>
         <input type="text" id="messageInput" placeholder="Type your message..." />
         <button id="sendButton">Send</button>
+        <button id="clearButton">Clear Chat</button>
     </div>
 
     <!-- Firebase SDK -->
@@ -98,6 +99,7 @@
         const messagesDiv = document.getElementById('messages');
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
+        const clearButton = document.getElementById('clearButton');
 
         // Check if user has a name stored in local storage
         const storedName = localStorage.getItem('username');
@@ -151,6 +153,23 @@
         database.ref('messages').on('child_added', snapshot => {
             const { username, message } = snapshot.val();
             displayMessage(username, message);
+        });
+
+        // Clear chat button functionality
+        clearButton.addEventListener('click', () => {
+            const pin = prompt("Enter the PIN to clear chat:");
+            if (pin === "1234") { // Change "1234" to your desired PIN
+                database.ref('messages').remove()
+                    .then(() => {
+                        messagesDiv.innerHTML = ''; // Clear the displayed messages
+                        alert("Chat cleared successfully.");
+                    })
+                    .catch(error => {
+                        console.error("Error clearing chat: ", error);
+                    });
+            } else {
+                alert("Incorrect PIN. Chat not cleared.");
+            }
         });
     </script>
 </body>
