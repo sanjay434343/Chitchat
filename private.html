@@ -229,6 +229,15 @@
             margin-left: -6px;
             color: #000000;
         }
+
+        .pr{
+            position: relative;
+            left: 174px;
+            text-decoration: underline;
+            top: -20px;
+            font-weight: 1000;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
@@ -243,6 +252,7 @@
     <div id="chatContainer">
         <div class="container">
             <h2 class="b">C <span class="sp">hit</span> C <span class="sp">hat</span> </h2> 
+            <p class="pr">Private chat</p>
             <div id="messages"></div>
           
         </div>
@@ -333,8 +343,8 @@ sendButton.addEventListener('click', () => {
     const username = localStorage.getItem('username');
 
     if (message) {
-        // Push message to Firebase
-        database.ref('messages').push({
+        // Push message to Firebase under the new node
+        database.ref('chatMessages').push({
             username: username,
             message: message
         });
@@ -342,8 +352,8 @@ sendButton.addEventListener('click', () => {
     }
 });
 
-// Listen for incoming messages
-database.ref('messages').on('child_added', (snapshot) => {
+// Listen for incoming messages from the new node
+database.ref('chatMessages').on('child_added', (snapshot) => {
     const { username, message } = snapshot.val();
     const isSelf = username === localStorage.getItem('username');
     displayMessage(username, message, isSelf); // Display incoming messages
@@ -358,7 +368,7 @@ clearButton.addEventListener('click', () => {
 submitPinButton.addEventListener('click', () => {
     const pin = pinInput.value.trim();
     if (pin === '1234') { // Example PIN, change it to your desired one
-        database.ref('messages').set(null); // Clear all messages from Firebase
+        database.ref('chatMessages').set(null); // Clear all messages from Firebase
         messagesDiv.innerHTML = ''; // Clear local messages display
         pinModal.style.display = 'none'; // Close PIN modal
     } else {
