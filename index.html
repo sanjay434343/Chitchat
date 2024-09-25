@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Authentication</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        #authContainer, #chatContainer {
+            display: none;
+            width: 80%;
+            max-width: 400px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        #messageInput {
+            width: calc(100% - 60px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #sendButton {
+            padding: 10px;
+            background-color: lightblue;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #sendButton:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="authContainer">
+        <h1>Welcome to Mini Chat</h1>
+        <input type="text" id="usernameInput" placeholder="Enter your name..." />
+        <button id="startChatButton">Start Chat</button>
+    </div>
+
+    <div id="chatContainer">
+        <h2>Chat Room</h2>
+        <div id="messages"></div>
+        <input type="text" id="messageInput" placeholder="Type your message..." />
+        <button id="sendButton">Send</button>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCq1cjF6IaTOUpZ8-xXWfpqLWFWW8tX8sI",
+            authDomain: "vokiee-502b1.firebaseapp.com",
+            databaseURL: "https://vokiee-502b1-default-rtdb.firebaseio.com",
+            projectId: "vokiee-502b1",
+            storageBucket: "vokiee-502b1.appspot.com",
+            messagingSenderId: "714989736332",
+            appId: "1:714989736332:web:3a097ad8bb9fd71d8c06a9"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // DOM Elements
+        const authContainer = document.getElementById('authContainer');
+        const chatContainer = document.getElementById('chatContainer');
+        const usernameInput = document.getElementById('usernameInput');
+        const startChatButton = document.getElementById('startChatButton');
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        // Check if user has a name stored in local storage
+        const storedName = localStorage.getItem('username');
+        if (storedName) {
+            startChat(storedName);
+        } else {
+            authContainer.style.display = 'block';
+        }
+
+        // Function to start the chat
+        function startChat(username) {
+            localStorage.setItem('username', username);
+            authContainer.style.display = 'none';
+            chatContainer.style.display = 'block';
+        }
+
+        // Start chat on button click
+        startChatButton.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            if (username) {
+                startChat(username);
+            }
+        });
+
+        // Function to display messages in chat
+        function displayMessage(username, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.innerHTML = `<strong>${username}:</strong> ${message}`;
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
+        }
+
+        // Function to send message
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value.trim();
+            const username = localStorage.getItem('username');
+
+            if (message) {
+                // Push message to Firebase
+                database.ref('messages').push({
+                    username: username,
+                    message: message
+                });
+
+                messageInput.value = ''; // Clear input
+            }
+        });
+
+        // Listen for new messages in Firebase
+        database.ref('messages').on('child_added', snapshot => {
+            const { username, message } = snapshot.val();
+            displayMessage(username, message);
+        });
+    </script>
+</body>
+</html>
