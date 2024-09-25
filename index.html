@@ -3,72 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Authentication</title>
+    <title>Real Chat Application</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background-color: #f0f0f0;
             margin: 0;
-        }
-
-        h1 {
-            margin-bottom: 20px;
+           background-color: #ffffff;
+            color: #333;
+            overflow: hidden; /* Prevent scrolling */
         }
 
         #authContainer, #chatContainer {
             display: none;
-            width: 80%;
-            max-width: 400px;
-            margin: 20px auto;
-            border: 1px solid #ccc;
-            background-color: white;
+            width: 100%;
+            height: 90%  ;
+            margin: 0;
             padding: 20px;
-            border-radius: 5px;
+            box-sizing: border-box;
+            position: relative;
+           position: absolute;
+           bottom: 70px;
         }
 
-        #messageInput {
-            width: calc(100% - 60px);
+        .container {
+            background-color: rgba(255, 255, 255, 0);
+            border-radius: 10px;
+          
+            height: 100%; /* Fill the height */
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        #usernameInput {
+            width: calc(100% - 22px);
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 2px solid #74ebd5;
             border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
 
         #sendButton, #clearButton {
-            padding: 10px;
-            background-color: lightblue;
+            padding: 15px 10px;
             border: none;
-            border-radius: 5px;
+            border-radius: 50%;
+            font-size: 12px;
             cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
         }
 
-        #sendButton:disabled {
-            background-color: gray;
-            cursor: not-allowed;
+        #sendButton {
+            background-color: #74ebd5;
+            color: white;
+    
+        }
+
+        #sendButton:hover {
+            background-color: #9face6;
+            transform: translateY(-2px);
+        }
+
+        #clearButton {
+            background-color: #ff6b6b;
+            color: white;
+            margin-left: 10px;
+        }
+
+        #clearButton:hover {
+            background-color: #ff4c4c;
+            transform: translateY(-2px);
+        }
+
+        #messages {
+            max-height: calc(100% - 100px); /* Adjust height dynamically */
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #ecff9a;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex-grow: 1; /* Allow messages to take available space */
+            position: relative; /* Positioning for absolute elements */
         }
 
         .message {
-            margin: 5px 0;
+            padding: 10px;
+            border-radius: 10px;
+            position: relative;
+            max-width: 100%;
+        
+            word-wrap: break-word; /* Break long words */
+        }
+
+        .message.me {
+            background-color: #dcf8c6; /* Light green for self */
+            color: black;
+            align-self: flex-end;
+            margin-left: auto; /* Push to the right */
+            border-bottom-right-radius: 0; /* Rounded corners */
+            margin-bottom: 15px;
+        }
+
+        .message.other {
+            background-color: #ffffff; /* White for others */
+            color: black;
+            align-self: flex-start;
+            margin-right: auto; /* Push to the left */
+            border-bottom-left-radius: 0; /* Rounded corners */
+        }
+
+        .message strong {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold; /* Bold name */
+        }
+
+        .inputContainer {
+            display: flex;
+            position: fixed; /* Fixed positioning */
+            bottom: 0; /* Stick to the bottom */
+            left: 0;
+            right: 0;
+            padding: 10px; /* Add some padding */
+            background: white; /* Background for input area */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10; /* Keep it above other content */
+            margin-top: 100px;
+        }
+
+        .pin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pin-modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .pin-input {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #74ebd5;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+        }
+
+        .modal-button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #74ebd5;
+            color: white;
+            cursor: pointer;
+        }
+
+        .modal-button:hover {
+            background-color: #9face6;
+        }
+
+        #messageInput{
+            width: 100%;
+            padding: 15px;
+            margin: 5px 5px 5px 5px;
+            border-radius: 30px;
+            border: 1px solid black;
         }
     </style>
 </head>
 <body>
     <div id="authContainer">
-        <h1>Welcome to Mini Chat</h1>
-        <input type="text" id="usernameInput" placeholder="Enter your name..." />
-        <button id="startChatButton">Start Chat</button>
+        <div class="container">
+            <h1>Welcome to Mini Chat</h1>
+            <input type="text" id="usernameInput" placeholder="Enter your name..." />
+            <button id="startChatButton">Start Chat</button>
+        </div>
     </div>
 
     <div id="chatContainer">
-        <h2>Chat Room</h2>
-        <div id="messages"></div>
-        <input type="text" id="messageInput" placeholder="Type your message..." />
-        <button id="sendButton">Send</button>
-        <button id="clearButton">Clear Chat</button>
+        <div class="container">
+            <h2>Chat Room</h2>
+            <div id="messages"></div>
+          
+        </div>
+    </div>
+  <div class="inputContainer">
+                <input type="text" id="messageInput" placeholder="Type your message..." />
+                <button id="sendButton"><span class="material-symbols-outlined">
+                    send
+                    </span></button>
+                <button id="clearButton"><span class="material-symbols-outlined">
+                    delete
+                    </span></button>
+            </div>
+    <!-- PIN Modal -->
+    <div class="pin-modal" id="pinModal">
+        <div class="pin-modal-content">
+            <h2>Enter PIN to Clear Chat</h2>
+            <input type="text" class="pin-input" id="pinInput" placeholder="Enter PIN..." />
+            <button class="modal-button" id="submitPinButton">Submit</button>
+        </div>
     </div>
 
     <!-- Firebase SDK -->
@@ -100,6 +257,9 @@
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
         const clearButton = document.getElementById('clearButton');
+        const pinModal = document.getElementById('pinModal');
+        const pinInput = document.getElementById('pinInput');
+        const submitPinButton = document.getElementById('submitPinButton');
 
         // Check if user has a name stored in local storage
         const storedName = localStorage.getItem('username');
@@ -116,18 +276,10 @@
             chatContainer.style.display = 'block';
         }
 
-        // Start chat on button click
-        startChatButton.addEventListener('click', () => {
-            const username = usernameInput.value.trim();
-            if (username) {
-                startChat(username);
-            }
-        });
-
         // Function to display messages in chat
-        function displayMessage(username, message) {
+        function displayMessage(username, message, isSelf) {
             const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
+            messageElement.classList.add('message', isSelf ? 'me' : 'other');
             messageElement.innerHTML = `<strong>${username}:</strong> ${message}`;
             messagesDiv.appendChild(messageElement);
             messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
@@ -144,31 +296,48 @@
                     username: username,
                     message: message
                 });
-
-                messageInput.value = ''; // Clear input
+                messageInput.value = ''; // Clear input after sending
             }
         });
 
-        // Listen for new messages in Firebase
-        database.ref('messages').on('child_added', snapshot => {
+        // Listen for incoming messages
+        database.ref('messages').on('child_added', (snapshot) => {
             const { username, message } = snapshot.val();
-            displayMessage(username, message);
+            const isSelf = username === localStorage.getItem('username');
+            displayMessage(username, message, isSelf); // Display incoming messages
         });
 
-        // Clear chat button functionality
+        // Clear chat
         clearButton.addEventListener('click', () => {
-            const pin = prompt("Enter the PIN to clear chat:");
-            if (pin === "1234") { // Change "1234" to your desired PIN
-                database.ref('messages').remove()
-                    .then(() => {
-                        messagesDiv.innerHTML = ''; // Clear the displayed messages
-                        alert("Chat cleared successfully.");
-                    })
-                    .catch(error => {
-                        console.error("Error clearing chat: ", error);
-                    });
+            pinModal.style.display = 'flex'; // Show PIN modal
+        });
+
+        // Submit PIN
+        submitPinButton.addEventListener('click', () => {
+            const pin = pinInput.value.trim();
+            if (pin === '1234') { // Example PIN, change it to your desired one
+                database.ref('messages').set(null); // Clear all messages from Firebase
+                messagesDiv.innerHTML = ''; // Clear local messages display
+                pinModal.style.display = 'none'; // Close PIN modal
             } else {
-                alert("Incorrect PIN. Chat not cleared.");
+                alert('Incorrect PIN!');
+            }
+        });
+
+        // Handle modal close (optional)
+        window.addEventListener('click', (event) => {
+            if (event.target === pinModal) {
+                pinModal.style.display = 'none';
+            }
+        });
+
+        // Start chat event
+        startChatButton.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            if (username) {
+                startChat(username);
+            } else {
+                alert('Please enter a name!');
             }
         });
     </script>
