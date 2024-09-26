@@ -400,17 +400,6 @@ document.getElementById('changeUsernameButton').addEventListener('click', () => 
     }
 });
 
-// Handle keyboard input directly into message input
-document.addEventListener('keydown', (event) => {
-    // Focus on the message input if it's not already focused
-    messageInput.focus();
-
-    if (event.key === 'Enter') {
-        event.preventDefault(); // Prevent default enter action
-        sendButton.click(); // Simulate clicking send button
-    } 
-});
-
 
 
     </script>
