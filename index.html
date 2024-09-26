@@ -411,21 +411,6 @@ document.addEventListener('keydown', (event) => {
     } 
 });
 
-// Only listen for keypress events
-document.addEventListener('keypress', (event) => {
-    // Check if the key is a single character
-    if (event.key.length === 0) {
-        // Append the key to the input
-        messageInput.value += event.key; 
-    }
-});
-
-// Redirect to private.html when "private-sara" is typed
-messageInput.addEventListener('input', () => {
-    if (messageInput.value.trim().toLowerCase() === 'private-cc') {
-        window.location.href = 'private.html'; // Redirect to the new page
-    }
-});
 
 
     </script>
